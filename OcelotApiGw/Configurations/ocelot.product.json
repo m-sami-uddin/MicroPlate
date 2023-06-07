@@ -1,0 +1,12 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "https",
+      "ServiceName": "product",
+      "UpstreamPathTemplate": "/api/product/{everything}",
+      "UpstreamHttpMethod": [],
+      "SwaggerKey": "product"
+    }
+  ]
+}

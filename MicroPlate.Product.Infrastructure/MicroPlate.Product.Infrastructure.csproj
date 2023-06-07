@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MicroPlate.Product.Application\MicroPlate.Product.Application.csproj" />
+  </ItemGroup>
+
 </Project>

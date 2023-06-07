@@ -24,6 +24,16 @@ namespace MicroPlate.AuthenticationApi
             builder.Services.AddAutoMapper(typeof(MapperProfile));
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddSingleton<IJwtTokenHandler, JwtTokenHandler>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("LocalReact",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -32,28 +42,24 @@ namespace MicroPlate.AuthenticationApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("LocalReact");
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
             app.MapPost("Account/Login", (LoginRequestDto loginRequestDto, IUserRepository userRepository) =>
-            {
-                return userRepository.Login(loginRequestDto) is LoginResponseDto loginResponseDto
+
+               userRepository.Login(loginRequestDto) is LoginResponseDto loginResponseDto
                    ? Results.Ok(loginResponseDto)
-                   : Results.Unauthorized();
-
-
-            })
+                   : Results.Unauthorized())
             .WithName("Login")
             .WithOpenApi();
             app.MapPost("/Account/Register", (RegisterRequestDto registerRequestDto, IUserRepository userRepository) =>
-            {
-                return userRepository.Register(registerRequestDto)
+                userRepository.Register(registerRequestDto)
                    ? Results.Ok("Registered Successfully")
-                   : Results.BadRequest("Failed");
+                   : Results.BadRequest("Failed")
 
-            })
+            )
             .WithName("Register")
             .WithOpenApi();
 

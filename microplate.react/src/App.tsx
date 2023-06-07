@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Suspense } from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
 
-function App() {
+import ErrorBoundary from 'Components/ErrorBoundary/ErrorBoundary';
+import Spinner from 'Components/Spinner/Spinner';
+import store from 'Store';
+import { Provider } from 'react-redux';
+import './App.css';
+import Dashboard from './Pages/Dashboard/Dashboard';
+import Login from './Pages/Login/Login';
+
+export default function App() {
+  const { accessToken } = store.getState().auth.user;
+  if (!accessToken) {
+    return <ErrorBoundary>
+      <Provider store={store}>
+        <Suspense fallback={() => <Spinner />}>
+          <Login />
+        </Suspense>
+      </Provider >
+    </ErrorBoundary >
+
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ErrorBoundary>
+      <Provider store={store}>
+        <div className="wrapper">
+          <h1>Application</h1>
+          <BrowserRouter>
+            <Route path="/dashboard">
+              <Dashboard />
+            </Route>
+            <Route path="/preferences">
+              {/* <Preferences /> */}
+            </Route>
+          </BrowserRouter>
+        </div>
+      </Provider>
+    </ErrorBoundary>
   );
 }
-
-export default App;
